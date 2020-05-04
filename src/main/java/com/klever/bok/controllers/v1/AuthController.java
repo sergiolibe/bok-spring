@@ -1,6 +1,5 @@
 package com.klever.bok.controllers.v1;
 
-import com.klever.bok.repositories.RoleRepository;
 import com.klever.bok.controllers.ApiVersion;
 import com.klever.bok.models.ERole;
 import com.klever.bok.models.Role;
@@ -8,7 +7,9 @@ import com.klever.bok.models.User;
 import com.klever.bok.payload.request.LoginRequest;
 import com.klever.bok.payload.request.SignupRequest;
 import com.klever.bok.payload.response.JwtResponse;
+import com.klever.bok.payload.response.MessageResponse;
 import com.klever.bok.payload.response.error.BadRequestResponse;
+import com.klever.bok.repositories.RoleRepository;
 import com.klever.bok.repositories.UserRepository;
 import com.klever.bok.security.jwt.JwtUtils;
 import com.klever.bok.security.services.UserDetailsImpl;
@@ -23,9 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -59,19 +58,18 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
+                userDetails.getName(),
+                userDetails.getLastname(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
+                userDetails.getRoles()));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody final SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername()))
             return badRequest("Error: Username is already taken!");
 
@@ -79,53 +77,41 @@ public class AuthController {
             return badRequest("Error: Email is already in use!");
 
         // Create new user's account
+        userRepository.save(buildUser(signUpRequest));
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    private User buildUser(SignupRequest signUpRequest) {
         User user = instantiateUser(signUpRequest);
         user.setRoles(getRoles(signUpRequest));
-        userRepository.save(user);
-
-        return ResponseEntity.ok(new BadRequestResponse("User registered successfully!"));
+        return user;
     }
 
-    private Set<Role> getRoles(@RequestBody @Valid SignupRequest signUpRequest) {
-        Set<String> signUpRequestRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (signUpRequestRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            signUpRequestRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-
-                        break;
-                    case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
-
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-        return roles;
-    }
-
-    private User instantiateUser(@RequestBody @Valid SignupRequest signUpRequest) {
+    private User instantiateUser(SignupRequest signUpRequest) {
         return new User(
                 signUpRequest.getName(),
                 signUpRequest.getLastname(),
                 signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 passwordEncoder.encode(signUpRequest.getPassword()));
+    }
+
+    private Set<Role> getRoles(SignupRequest signUpRequest) {
+        Set<String> signUpRequestRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+
+        if (signUpRequestRoles == null)
+            roles.add(getRole(ERole.defaultRole()));
+        else
+            for (String role : signUpRequestRoles)
+                roles.add(getRole(ERole.byName(role)));
+
+        return roles;
+    }
+
+    private Role getRole(ERole roleUser) {
+        return roleRepository.findByName(roleUser)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
     }
 
     private ResponseEntity<BadRequestResponse> badRequest(String s) {

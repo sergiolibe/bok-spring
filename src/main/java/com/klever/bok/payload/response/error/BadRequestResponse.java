@@ -6,10 +6,10 @@ import java.util.List;
 
 public class BadRequestResponse extends ErrorResponse {
     public BadRequestResponse(List<String> errors) {
-        super(HttpStatus.BAD_REQUEST, errors);
+        super(HttpStatus.BAD_REQUEST.value(), errors);
     }
 
     public BadRequestResponse(String error) {
-        super(HttpStatus.BAD_REQUEST, error);
+        super(HttpStatus.BAD_REQUEST.value(), error);
     }
 }

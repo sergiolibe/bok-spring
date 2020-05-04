@@ -45,9 +45,9 @@ public class CardController {
     public Card create(@AuthenticationPrincipal UserDetails userDetails,
                        @RequestBody final Card card) {
         User user = userService.userFromUserDetails(userDetails);
-        logger.info("before userId, Card: {}", card);
+        logger.info("before setting userId, Card: {}", card);
         card.setUser(user);
-        logger.info("after  userId, Card: {}", card);
+        logger.info("after  setting userId, Card: {}", card);
         return cardRepository.saveAndFlush(card);
     }
 

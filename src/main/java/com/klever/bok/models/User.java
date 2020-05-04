@@ -30,24 +30,24 @@ public class User {
     private UUID id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min = 6, max = 20)
     private String name;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min = 6, max = 20)
     private String lastname;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min = 6, max = 20)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(min = 5, max = 50)
     @Email
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min = 6, max = 120)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -67,8 +67,8 @@ public class User {
     }
 
     public User(String name, String lastname, String username, String email, String password) {
-        this.username = name;
-        this.username = lastname;
+        this.name = name;
+        this.lastname = lastname;
         this.username = username;
         this.email = email;
         this.password = password;

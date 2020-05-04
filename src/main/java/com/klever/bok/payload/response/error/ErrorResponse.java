@@ -15,18 +15,18 @@ import java.util.List;
 
 public class ErrorResponse {
     private Date timestamp;
-    private HttpStatus httpStatus;
+    private int status;
     private List<String> errors;
 
-    public ErrorResponse(HttpStatus httpStatus, List<String> errors) {
+    public ErrorResponse(int status, List<String> errors) {
         timestamp = new Date();
-        this.httpStatus = httpStatus;
+        this.status = status;
         this.errors = errors;
     }
 
-    public ErrorResponse(HttpStatus httpStatus, String error) {
+    public ErrorResponse(int status, String error) {
         timestamp = new Date();
-        this.httpStatus = httpStatus;
+        this.status = status;
         this.errors = new ArrayList<>();
         this.errors.add(error);
     }
