@@ -33,24 +33,11 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private Set<Card> cards;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    private Date createdAt;
-    private Date updatedAt;
-
     public Tag() {
     }
 
     @PrePersist
     public void prePersist() {
         this.setId(UUID.randomUUID());
-        this.setCreatedAt(new Date());
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.setUpdatedAt(new Date());
     }
 }

@@ -1,4 +1,4 @@
-package com.klever.bok.security.services;
+package com.klever.bok.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.klever.bok.models.User;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Setter
 @Getter
 @AllArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class UserPrincipal implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private UUID id;
@@ -33,12 +33,12 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(User user) {
+    public static UserPrincipal build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
 
-        return new UserDetailsImpl(
+        return new UserPrincipal(
                 user.getId(),
                 user.getName(),
                 user.getLastname(),

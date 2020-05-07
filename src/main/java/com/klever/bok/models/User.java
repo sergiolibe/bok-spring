@@ -1,5 +1,7 @@
 package com.klever.bok.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.klever.bok.models.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,30 +26,20 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = "email")
         })
 //@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
-public class User {
+@JsonView(Views.UserAccess.class)
+public class User extends UserDateAudit {
 
     @Id
     private UUID id;
 
-    @NotBlank
-    @Size(min = 6, max = 20)
     private String name;
 
-    @NotBlank
-    @Size(min = 6, max = 20)
     private String lastname;
 
-    @NotBlank
-    @Size(min = 6, max = 20)
     private String username;
 
-    @NotBlank
-    @Size(min = 5, max = 50)
-    @Email
     private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 120)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -56,12 +48,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<Card> cards;
-
-    private Date createdAt;
-    private Date updatedAt;
+//    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY,
+//            cascade = CascadeType.ALL)
+//    private Set<Card> cards;
 
     public User() {
     }
@@ -77,11 +66,5 @@ public class User {
     @PrePersist
     public void prePersist() {
         this.setId(UUID.randomUUID());
-        this.setCreatedAt(new Date());
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.setUpdatedAt(new Date());
     }
 }

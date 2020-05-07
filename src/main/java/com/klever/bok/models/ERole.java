@@ -1,5 +1,7 @@
 package com.klever.bok.models;
 
+import java.util.Optional;
+
 public enum ERole {
     ROLE_USER,
     ROLE_MODERATOR,
@@ -13,6 +15,7 @@ public enum ERole {
         for (ERole eRole : values())
             if (eRole.toString().equals(name))
                 return eRole;
-        return defaultRole();
+//        return defaultRole();
+        throw new RuntimeException("Error: Role < " + name + " > is not found.");
     }
 }

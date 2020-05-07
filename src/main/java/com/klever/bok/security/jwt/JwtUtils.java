@@ -1,6 +1,6 @@
 package com.klever.bok.security.jwt;
 
-import com.klever.bok.security.services.UserDetailsImpl;
+import com.klever.bok.security.model.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class JwtUtils {
 
     public String generateJwtToken(Authentication authentication) {
 
-        UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
         Date currentDate = new Date();
 

@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface CardRepository extends JpaRepository<Card, Long> {
-    List<Card> findByUserId(UUID userId);
+public interface CardRepository extends JpaRepository<Card, UUID> {
+    List<Card> findByCreatedBy(UUID userId);
 }

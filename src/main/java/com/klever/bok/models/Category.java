@@ -1,5 +1,6 @@
 package com.klever.bok.models;
 
+import com.klever.bok.models.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Entity
 @Table(
         name = "categories")
-public class Category {
+public class Category extends UserDateAudit {
     @Id
     private UUID id;
 
@@ -29,24 +30,11 @@ public class Category {
     @JoinColumn(name = "parent_id", nullable = false)
     private Category parentCategory;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    private Date createdAt;
-    private Date updatedAt;
-
     public Category() {
     }
 
     @PrePersist
     public void prePersist() {
         this.setId(UUID.randomUUID());
-        this.setCreatedAt(new Date());
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.setUpdatedAt(new Date());
     }
 }
