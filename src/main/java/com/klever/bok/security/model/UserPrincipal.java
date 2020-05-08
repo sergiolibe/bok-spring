@@ -1,7 +1,7 @@
 package com.klever.bok.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

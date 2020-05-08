@@ -1,6 +1,6 @@
 package com.klever.bok.security.services;
 
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.User;
 import com.klever.bok.repositories.UserRepository;
 import com.klever.bok.security.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;

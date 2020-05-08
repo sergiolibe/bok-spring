@@ -1,6 +1,6 @@
 package com.klever.bok.repositories;
 
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

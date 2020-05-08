@@ -1,4 +1,4 @@
-package com.klever.bok.models.audit;
+package com.klever.bok.models.entity.audit;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

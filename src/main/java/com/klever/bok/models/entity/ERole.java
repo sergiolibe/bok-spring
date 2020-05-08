@@ -1,6 +1,4 @@
-package com.klever.bok.models;
-
-import java.util.Optional;
+package com.klever.bok.models.entity;
 
 public enum ERole {
     ROLE_USER,

@@ -1,7 +1,7 @@
 package com.klever.bok.repositories;
 
-import com.klever.bok.models.ERole;
-import com.klever.bok.models.Role;
+import com.klever.bok.models.entity.ERole;
+import com.klever.bok.models.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
 package com.klever.bok.controllers;
 
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.User;
 import com.klever.bok.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

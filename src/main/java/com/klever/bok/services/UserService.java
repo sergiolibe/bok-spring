@@ -1,7 +1,7 @@
 package com.klever.bok.services;
 
 import com.klever.bok.exceptions.ResourceNotFoundException;
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.User;
 import com.klever.bok.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

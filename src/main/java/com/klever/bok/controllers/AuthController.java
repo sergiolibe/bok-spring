@@ -1,9 +1,9 @@
 package com.klever.bok.controllers;
 
 import com.klever.bok.exceptions.BadRequestException;
-import com.klever.bok.models.ERole;
-import com.klever.bok.models.Role;
-import com.klever.bok.models.User;
+import com.klever.bok.models.entity.ERole;
+import com.klever.bok.models.entity.Role;
+import com.klever.bok.models.entity.User;
 import com.klever.bok.payload.request.LoginRequest;
 import com.klever.bok.payload.request.SignupRequest;
 import com.klever.bok.payload.response.JwtResponse;

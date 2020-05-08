@@ -1,8 +1,7 @@
-package com.klever.bok.models;
+package com.klever.bok.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.klever.bok.models.audit.UserDateAudit;
+import com.klever.bok.models.entity.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

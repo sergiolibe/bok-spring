@@ -1,4 +1,4 @@
-package com.klever.bok.models;
+package com.klever.bok.models.entity;
 
 import lombok.Getter;
 import lombok.Setter;

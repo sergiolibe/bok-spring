@@ -1,11 +1,9 @@
 package com.klever.bok.services;
 
-import com.klever.bok.exceptions.BadRequestException;
-import com.klever.bok.models.Card;
+import com.klever.bok.models.entity.Card;
 import com.klever.bok.payload.response.PagedResponse;
 import com.klever.bok.repositories.CardRepository;
 import com.klever.bok.security.model.UserPrincipal;
-import com.klever.bok.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class CardService {

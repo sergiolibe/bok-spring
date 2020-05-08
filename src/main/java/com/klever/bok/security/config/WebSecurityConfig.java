@@ -1,4 +1,4 @@
-package com.klever.bok.security;
+package com.klever.bok.security.config;
 
 import com.klever.bok.security.jwt.AuthEntryPointJwt;
 import com.klever.bok.security.jwt.AuthTokenFilter;

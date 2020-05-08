@@ -1,7 +1,6 @@
-package com.klever.bok.models;
+package com.klever.bok.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.klever.bok.models.audit.UserDateAudit;
+import com.klever.bok.models.entity.audit.UserDateAudit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,7 +33,6 @@ public class Card extends UserDateAudit {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
-    @JsonIgnore
     private Category category;
 
     @ManyToMany

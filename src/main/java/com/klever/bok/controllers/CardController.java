@@ -1,6 +1,6 @@
 package com.klever.bok.controllers;
 
-import com.klever.bok.models.Card;
+import com.klever.bok.models.entity.Card;
 import com.klever.bok.payload.response.PagedResponse;
 import com.klever.bok.security.model.CurrentUser;
 import com.klever.bok.security.model.UserPrincipal;

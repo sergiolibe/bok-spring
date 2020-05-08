@@ -1,10 +1,12 @@
 package com.klever.bok.services;
 
 import com.klever.bok.exceptions.ResourceNotFoundException;
-import com.klever.bok.models.Tag;
+import com.klever.bok.models.TagDTO;
+import com.klever.bok.models.entity.Tag;
 import com.klever.bok.payload.response.PagedResponse;
 import com.klever.bok.repositories.TagRepository;
 import com.klever.bok.security.model.UserPrincipal;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -24,6 +27,9 @@ public class TagService {
 
     @Autowired
     TagRepository tagRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     public PagedResponse<Tag> findAllByUser(UserPrincipal userPrincipal, int page, int pageSize) {
         PagedResponse.validatePageNumberAndSize(page, pageSize);
@@ -44,26 +50,27 @@ public class TagService {
 
     }
 
-    public Tag createTag(Tag tag) {
+    public Tag createTag(TagDTO tagDTO) {
+        Tag tag = modelMapper.map(tagDTO,Tag.class);
         return tagRepository.save(tag);
     }
 
-    public Tag updateTag(UserPrincipal currentUser, UUID tagId, Tag modifiedTag) {
+    public Tag updateTag(UserPrincipal currentUser, UUID tagId, TagDTO tagDTO) {
         return tagRepository.findByIdAndCreatedBy(tagId, currentUser.getId()).map(
                 tag -> {
-                    tag.setName(modifiedTag.getName());
-                    tag.setColor(modifiedTag.getColor());
+                    tag.setName(tagDTO.getName());
+                    tag.setColor(tagDTO.getColor());
                     return tagRepository.save(tag);
                 })
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Card", "uuid", tagId)
+                        () -> new ResourceNotFoundException("Tag", "uuid", tagId)
                 );
     }
 
     public Tag findById(UserPrincipal currentUser, UUID tagId) {
         return tagRepository.findByIdAndCreatedBy(tagId, currentUser.getId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Card", "uuid", tagId)
+                        () -> new ResourceNotFoundException("Tag", "uuid", tagId)
                 );
     }
 }
