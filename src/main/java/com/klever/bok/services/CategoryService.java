@@ -1,5 +1,6 @@
 package com.klever.bok.services;
 
+import com.klever.bok.exceptions.BadRequestException;
 import com.klever.bok.exceptions.ResourceNotFoundException;
 import com.klever.bok.models.CategoryDTO;
 import com.klever.bok.models.entity.Category;
@@ -30,27 +31,8 @@ public class CategoryService {
     @Autowired
     ModelMapper modelMapper;
 
-    public PagedResponse<Category> findAllByUser(UserPrincipal userPrincipal, int page, int pageSize) {
-        PagedResponse.validatePageNumberAndSize(page, pageSize);
-
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.DESC, "createdAt");
-        Page<Category> categories = categoryRepository.findAllByCreatedBy(userPrincipal.getId(), pageable);
-
-        logger.info("There are {} categories on requested page", categories.getTotalElements());
-
-        return new PagedResponse<>(
-                categories.getNumberOfElements() > 0 ? categories.getContent() : Collections.emptyList(),
-                categories.getNumber(),
-                categories.getSize(),
-                categories.getTotalElements(),
-                categories.getTotalPages(),
-                categories.isLast()
-        );
-
-    }
-
     public Category findById(UserPrincipal currentUser, UUID categoryId) {
-        logger.info("CurrentUser: {}, categoryId: {}", currentUser.getId(), categoryId);
+        logger.info("CurrentUserID: {}, categoryId: {}", currentUser.getId(), categoryId);
 
         return categoryRepository.findByIdAndCreatedBy(categoryId, currentUser.getId())
                 .orElseThrow(
@@ -58,29 +40,37 @@ public class CategoryService {
                 );
     }
 
+    public Page<Category> findAllByUser(UserPrincipal userPrincipal, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.DESC, "createdAt");
+        Page<Category> categories = categoryRepository.findAllByCreatedBy(userPrincipal.getId(), pageable);
+
+        logger.info("There are {} categories on requested page", categories.getTotalElements());
+
+        return categories;
+    }
+
     public Category createCategory(UserPrincipal currentUser, CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
-        category.setParentCategory(
-                extractParentCategory(currentUser, categoryDTO));
+        logger.info("Category [before] setParentCategory : {}", category);
+        category.setParentCategory(extractParentCategory(currentUser, categoryDTO));
+        logger.info("Category [after] setParentCategory : {}", category);
 
         return categoryRepository.save(category);
     }
 
     public Category updateCategory(UserPrincipal currentUser, UUID categoryId, CategoryDTO categoryDTO) {
-        return categoryRepository.findByIdAndCreatedBy(categoryId, currentUser.getId()).map(
-                category -> {
-                    category.setName(categoryDTO.getName());
-                    Category parentCategory = extractParentCategory(currentUser, categoryDTO);
-                    category.setParentCategory(generateValidParentCategoryLink(category, parentCategory));
-                    return categoryRepository.save(category);
-                })
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Category", "uuid", categoryId)
-                );
+        Category categoryToUpdate = findById( currentUser,categoryId);
+
+        logger.info("Category [before] updateFields : {}", categoryToUpdate);
+        categoryToUpdate.setName(categoryDTO.getName());
+        Category parentCategory = extractParentCategory(currentUser, categoryDTO);
+        categoryToUpdate.setParentCategory(generateValidParentCategoryLink(categoryToUpdate, parentCategory));
+        logger.info("Category [after] updateFields : {}", categoryToUpdate);
+        return categoryRepository.save(categoryToUpdate);
+
     }
 
     private Category extractParentCategory(UserPrincipal currentUser, CategoryDTO categoryDTO) {
-
         logger.info("CategoryDTO: {}", categoryDTO);
 
         return categoryDTO.getParentCategoryId() != null ?
@@ -93,7 +83,8 @@ public class CategoryService {
             return null;
         if (isValidChain(baseCategory, parentCategory))
             return parentCategory;
-        return baseCategory.getParentCategory();
+        else
+            throw new BadRequestException("Invalid Parent-Children chain Generated, there is a loop in the proposed chain");
     }
 
     private boolean isValidChain(Category baseCategory, Category parentCategory) {

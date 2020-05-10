@@ -10,6 +10,7 @@ import com.klever.bok.utils.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +30,9 @@ public class TagController {
     //    @JsonView(Views.UserAccess.class)
     @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public PagedResponse<Tag> getAll(@CurrentUser UserPrincipal currentUser,
-                                     @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
-                                     @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
+    public Page<Tag> getAll(@CurrentUser UserPrincipal currentUser,
+                            @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
+                            @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
         logger.info("Fetching all tags for user {}", currentUser.getId());
         return tagService.findAllByUser(currentUser, page, size);
     }

@@ -12,5 +12,6 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     Page<Category> findAllByCreatedBy(UUID userId, Pageable pageable);
-    Optional<Category> findByIdAndCreatedBy(UUID tagId,UUID userId);
+
+    Optional<Category> findByIdAndCreatedBy(UUID categoryId, UUID userId);
 }

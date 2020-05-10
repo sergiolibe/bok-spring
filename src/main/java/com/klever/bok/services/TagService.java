@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -31,27 +33,37 @@ public class TagService {
     @Autowired
     ModelMapper modelMapper;
 
-    public PagedResponse<Tag> findAllByUser(UserPrincipal userPrincipal, int page, int pageSize) {
-        PagedResponse.validatePageNumberAndSize(page, pageSize);
+    public Tag findById(UserPrincipal currentUser, UUID tagId) {
+        return tagRepository.findByIdAndCreatedBy(tagId, currentUser.getId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Tag", "uuid", tagId)
+                );
+    }
 
+    public Page<Tag> findAllByUser(UserPrincipal userPrincipal, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.Direction.DESC, "createdAt");
         Page<Tag> tags = tagRepository.findAllByCreatedBy(userPrincipal.getId(), pageable);
 
         logger.info("There are {} tags on requested page", tags.getTotalElements());
 
-        return new PagedResponse<>(
-                tags.getNumberOfElements() > 0 ? tags.getContent() : Collections.emptyList(),
-                tags.getNumber(),
-                tags.getSize(),
-                tags.getTotalElements(),
-                tags.getTotalPages(),
-                tags.isLast()
-        );
+        return tags;
+    }
 
+    public Set<Tag> findAllInIdSet(UserPrincipal userPrincipal, Set<UUID> tagIds) {
+        Optional<Set<Tag>> tags = tagRepository.findAllByIdInAndCreatedBy(tagIds, userPrincipal.getId());
+
+        tags.orElseThrow(() -> new ResourceNotFoundException("Tags", "Set<uuid>", tagIds));
+
+        logger.info("There are {} tags on resulting set, {} where requested", tags.get().size(), tagIds.size());
+
+        if (tags.get().size() != tagIds.size())
+            throw new ResourceNotFoundException("Tags", "(at least one of) Set<uuid>", tagIds);
+
+        return tags.get();
     }
 
     public Tag createTag(TagDTO tagDTO) {
-        Tag tag = modelMapper.map(tagDTO,Tag.class);
+        Tag tag = modelMapper.map(tagDTO, Tag.class);
         return tagRepository.save(tag);
     }
 
@@ -62,13 +74,6 @@ public class TagService {
                     tag.setColor(tagDTO.getColor());
                     return tagRepository.save(tag);
                 })
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Tag", "uuid", tagId)
-                );
-    }
-
-    public Tag findById(UserPrincipal currentUser, UUID tagId) {
-        return tagRepository.findByIdAndCreatedBy(tagId, currentUser.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Tag", "uuid", tagId)
                 );

@@ -23,7 +23,7 @@ import java.util.UUID;
                 @UniqueConstraint(columnNames = "email")
         })
 //@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
-@JsonView(Views.UserAccess.class)
+@JsonView(Views.Quick.class)
 public class User extends UserDateAudit {
 
     @Id
