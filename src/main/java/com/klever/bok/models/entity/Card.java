@@ -40,6 +40,7 @@ public class Card extends UserDateAudit {
             name = "cards_tags",
             joinColumns = @JoinColumn(name = "card_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    @JsonIgnoreProperties("cards")
     private Set<Tag> tags;
 
     public Card() {

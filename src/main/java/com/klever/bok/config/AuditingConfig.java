@@ -1,4 +1,4 @@
-package com.klever.bok.security.config;
+package com.klever.bok.config;
 
 import com.klever.bok.security.model.UserPrincipal;
 import org.springframework.context.annotation.Bean;

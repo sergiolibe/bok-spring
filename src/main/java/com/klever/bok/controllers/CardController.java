@@ -1,6 +1,8 @@
 package com.klever.bok.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.klever.bok.models.CardDTO;
+import com.klever.bok.models.Views;
 import com.klever.bok.models.entity.Card;
 import com.klever.bok.security.model.CurrentUser;
 import com.klever.bok.security.model.UserPrincipal;
@@ -32,19 +34,24 @@ public class CardController {
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
+    @JsonView(Views.Quick.class)
     public Page<Card> getAll(@CurrentUser UserPrincipal currentUser,
                              @RequestParam(value = "page", defaultValue = AppConstants.DEFAULT_PAGE_NUMBER) int page,
                              @RequestParam(value = "size", defaultValue = AppConstants.DEFAULT_PAGE_SIZE) int size) {
         return cardService.findAllByUser(currentUser, page, size);
     }
 
-    @GetMapping("{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @GetMapping("{id}")
+    @JsonView(Views.Complete.class)
     public Card getById(@CurrentUser UserPrincipal currentUser,
                         @PathVariable UUID id) {
         return cardService.findById(currentUser, id);
     }
+
+    @PreAuthorize("hasRole('USER')")
     @PostMapping()
+    @JsonView(Views.Complete.class)
     public Card create(@CurrentUser UserPrincipal currentUser,
                        @Valid @RequestBody final CardDTO cardDTO) {
         return cardService.createCard(currentUser, cardDTO);

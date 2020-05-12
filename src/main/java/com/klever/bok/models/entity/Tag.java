@@ -3,8 +3,10 @@ package com.klever.bok.models.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.klever.bok.models.entity.audit.UserDateAudit;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -13,6 +15,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@SuperBuilder
 
 @Entity
 @Table(
@@ -35,10 +39,8 @@ public class Tag extends UserDateAudit {
     private String color;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonIgnoreProperties("tags")
     private Set<Card> cards;
-
-    public Tag() {
-    }
 
     @PrePersist
     public void prePersist() {

@@ -3,7 +3,6 @@ package com.klever.bok.services;
 import com.klever.bok.exceptions.ResourceNotFoundException;
 import com.klever.bok.models.TagDTO;
 import com.klever.bok.models.entity.Tag;
-import com.klever.bok.payload.response.PagedResponse;
 import com.klever.bok.repositories.TagRepository;
 import com.klever.bok.security.model.UserPrincipal;
 import org.modelmapper.ModelMapper;
@@ -16,11 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TagService {
@@ -50,16 +45,16 @@ public class TagService {
     }
 
     public Set<Tag> findAllInIdSet(UserPrincipal userPrincipal, Set<UUID> tagIds) {
-        Optional<Set<Tag>> tags = tagRepository.findAllByIdInAndCreatedBy(tagIds, userPrincipal.getId());
+        Set<Tag> tags = tagRepository.findAllByIdInAndCreatedBy(tagIds, userPrincipal.getId());
 
-        tags.orElseThrow(() -> new ResourceNotFoundException("Tags", "Set<uuid>", tagIds));
+//        tags.orElseThrow(() -> new ResourceNotFoundException("Tags", "Set<uuid>", tagIds));
 
-        logger.info("There are {} tags on resulting set, {} where requested", tags.get().size(), tagIds.size());
+        logger.info("There are {} tags on resulting set, {} where requested", tags.size(), tagIds.size());
 
-        if (tags.get().size() != tagIds.size())
+        if (tags.size() < tagIds.size())
             throw new ResourceNotFoundException("Tags", "(at least one of) Set<uuid>", tagIds);
 
-        return tags.get();
+        return tags;
     }
 
     public Tag createTag(TagDTO tagDTO) {

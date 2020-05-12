@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.springframework.data.jpa.domain.AbstractAuditable_.createdBy;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -42,19 +43,19 @@ class CategoryRepositoryIntegrationTest {
         userId2 = UUID.randomUUID();
         userId3 = UUID.randomUUID();
 
-        category1user1 = new Category();
-        category1user1.setName("Programming");
-        category1user1.setCreatedBy(userId1);
+        category1user1 = Category.builder()
+                .name("Programming")
+                .createdBy(userId1).build();
         entityManager.persist(category1user1);
 
-        category2user1 = new Category();
-        category2user1.setName("Agile");
-        category2user1.setCreatedBy(userId1);
+        category2user1 = Category.builder()
+                .name("Agile")
+                .createdBy(userId1).build();
         entityManager.persist(category2user1);
 
-        category1user2 = new Category();
-        category1user2.setName("Culture");
-        category1user2.setCreatedBy(userId2);
+        category1user2 = Category.builder()
+                .name("Culture")
+                .createdBy(userId2).build();
         entityManager.persist(category1user2);
 
         entityManager.flush();

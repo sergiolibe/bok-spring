@@ -1,4 +1,4 @@
-package com.klever.bok.security.config;
+package com.klever.bok.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
