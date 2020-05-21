@@ -128,7 +128,7 @@ class CategoryServiceTest {
         assertNotNull(savedCategory);
         assertNull(savedCategory.getParentCategory());
         assertEquals(savedCategory.getId(), firstCategoryId);
-        assertEquals(savedCategory.getName(), firstCategoryName);
+        assertEquals(savedCategory.getName(), firstCategoryName+"a");
         assertEquals(savedCategory.getCreatedBy(), user1.getId());
     }
 
